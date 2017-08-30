@@ -1,0 +1,86 @@
+<div infinityScroll (endOfPage)="addPhotos()">
+  <md-card>
+    <form [formGroup]="searchForm" (ngSubmit)="searchImages(searchForm.get('search').value)">
+      <md-input-container class="form-group">
+        <input class="search" type="text" mdInput placeholder="Search for images" formControlName="search">
+      </md-input-container>
+      <div class="form-group">
+        <button md-button type="button" (click)="showHide = !showHide">
+          Advanced Search
+          <md-icon>{{showHide ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</md-icon>
+        </button>
+        <div class="advanced-search" *ngIf="showHide">
+          <md-input-container class="form-group">
+            <input type="number" mdInput placeholder="number of images" formControlName="imageNumber">
+            <md-error *ngIf="searchForm.get('imageNumber').hasError('min')">
+              Min value should be 5
+            </md-error>
+            <md-error *ngIf="searchForm.get('imageNumber').hasError('required')">
+              Number of images is <strong>required</strong>
+            </md-error>
+          </md-input-container>
+          <md-radio-group name="imageType" formControlName="imageType" class="form-group">
+            <label class="mat-input-placeholder ng-tns-c4-0 mat-empty mat-float" translate>Image type</label>
+            <md-radio-button *ngFor="let type of types" [value]="type.value">{{type.viewValue}}</md-radio-button>
+          </md-radio-group>
+
+          <md-input-container class="form-group">
+            <input type="text" placeholder="Select category" aria-label="Number" mdInput formControlName="imageCategory" [mdAutocomplete]="auto">
+            <md-autocomplete #auto="mdAutocomplete">
+              <md-option *ngFor="let option of filteredOptions | async" [value]="option">
+                {{ option }}
+              </md-option>
+            </md-autocomplete>
+          </md-input-container>
+
+          <md-select placeholder="Select image orientation" formControlName="imageOrientation" class="form-group">
+            <md-option *ngFor="let orientation of orientations" [value]="orientation.value">
+              {{orientation.viewValue}}
+            </md-option>
+          </md-select>
+
+          <md-radio-group name="imageOrder" formControlName="imageOrder" class="form-group">
+            <label class="mat-input-placeholder ng-tns-c4-0 mat-empty mat-float" translate>Image order</label>
+            <md-radio-button *ngFor="let order of orders" [value]="order.value">{{order.viewValue}}</md-radio-button>
+          </md-radio-group>
+
+          <md-select placeholder="Select search Language" formControlName="searchLang" class="form-group">
+            <md-option *ngFor="let lang of langs" [value]="lang.value">
+              {{lang.viewValue}}
+            </md-option>
+          </md-select>
+        </div>
+      </div>
+      <button md-raised-button class="searchButton" type="submit">Find Images</button>
+    </form>
+  </md-card>
+
+  <div *ngIf="searching">
+    <md-progress-bar mode="indeterminate"></md-progress-bar>
+  </div>
+
+  <md-card>
+    <h4 *ngIf="imagesFound" md-subheader="">Results: {{total}}</h4>
+    <masonry [useImagesLoaded]="true">
+      <masonry-brick *ngFor="let image of images; let i = index" class="image-container">
+        <md-card>
+          {{i+1}}
+          <a href="{{image.pageURL}}" target="_blank">
+            <md-card-header>
+              <div class="avatar" *ngIf="image.userImageURL" md-card-avatar [ngStyle]="{'background-image':'url('+ image.userImageURL +')'}"></div>
+              <div class="avatar" *ngIf="!image.userImageURL" md-card-avatar [ngStyle]="{'background-image':'url(assets/images/no_ava.png)'}"></div>
+              <md-card-title>User: {{image.user}}</md-card-title>
+            </md-card-header>
+            <img md-card-image src="{{image.webformatURL}}">
+            <md-card-content>
+              <p>Tags: {{ image.tags }}</p>
+              <p>Comments: {{ image.comments }}</p>
+              <p>Likes: {{ image.likes }}</p>
+            </md-card-content>
+          </a>
+        </md-card>
+      </masonry-brick>
+    </masonry>
+  </md-card>
+</div>
+
