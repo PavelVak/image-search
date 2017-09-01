@@ -16,11 +16,22 @@ export class ImageService {
 
   constructor(private http: Http) { }
 
-  getImage(query: string, perPage: any = '5', imageType: string = 'all', page?: any) {
+  getImage(query: string,
+           perPage: any = '5',
+           imageType: string = 'all',
+           imageCategory: string,
+           imageOrientation: string = 'all',
+           imageOrder: string = 'popular',
+           searchLang: string = 'en',
+           page?: any) {
     let searchParams = new URLSearchParams();
     searchParams.set('q', query);
     searchParams.set('per_page', perPage);
     searchParams.set('image_type', imageType);
+    searchParams.set('category', imageCategory);
+    searchParams.set('orientation', imageOrientation);
+    searchParams.set('order', imageOrder);
+    searchParams.set('lang', searchLang);
     if(!page) {
       searchParams.set('page', '1');
     } else {

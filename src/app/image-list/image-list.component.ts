@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/map';
+import { debug } from 'util';
 
 @Component({
   selector: 'app-image-list',
@@ -15,12 +16,12 @@ export class ImageListComponent implements OnInit {
   images: any[];
   imagesFound: boolean = false;
   searching: boolean = false;
-  loading: boolean = false;
+  loading: boolean = true;
 
   total: any;
   pages: number;
   currentPage: number;
-  respFlag: boolean = true;
+  respFlag: boolean = false;
 
   showHide: boolean = false; // флаг для показа advanced-search
 
@@ -112,8 +113,17 @@ export class ImageListComponent implements OnInit {
   }
 
   searchImages(query: string) {
+    if(!this.loading) {
+      this.loading = true;
+    }
     this.searching = true;
-    return this.imageService.getImage(query, this.searchForm.get('imageNumber').value, this.searchForm.get('imageType').value).subscribe(
+    return this.imageService.getImage(query,
+      this.searchForm.get('imageNumber').value,
+      this.searchForm.get('imageType').value,
+      this.searchForm.get('imageCategory').value,
+      this.searchForm.get('imageOrientation').value,
+      this.searchForm.get('imageOrder').value,
+      this.searchForm.get('searchLang').value).subscribe(
       data => this.handleSuccess(data),
       error => this.handleError(error),
       () => {console.log('Request complete'); this.searching = false;}
@@ -126,10 +136,13 @@ export class ImageListComponent implements OnInit {
     this.total = data.totalHits;
     this.pages = Math.ceil(this.total/this.searchForm.get('imageNumber').value);
     this.currentPage = 1;
-    if(this.pages !== this.currentPage) {
-      this.respFlag = true;
+    if(this.pages > this.currentPage) {
+        this.respFlag = true;
     }
     this.searchQuery = this.searchForm.get('search').value;
+    setTimeout(() => {
+      this.loading = false;
+    }, 300);
   }
 
   handleError(error) {
@@ -140,7 +153,14 @@ export class ImageListComponent implements OnInit {
     if(this.respFlag && !this.loading) {
       this.currentPage += 1;
       this.loading = true;
-      this.imageService.getImage(this.searchQuery, this.searchForm.get('imageNumber').value, this.searchForm.get('imageType').value, this.currentPage).subscribe(
+      this.imageService.getImage(this.searchQuery,
+        this.searchForm.get('imageNumber').value,
+        this.searchForm.get('imageType').value,
+        this.searchForm.get('imageCategory').value,
+        this.searchForm.get('imageOrientation').value,
+        this.searchForm.get('imageOrder').value,
+        this.searchForm.get('searchLang').value,
+        this.currentPage).subscribe(
         data => {
           this.images = this.images.concat(data.hits);
           setTimeout(() => {

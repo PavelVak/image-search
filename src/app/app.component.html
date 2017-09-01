@@ -1,3 +1,13 @@
+<div class="app">
+  <app-dynamic-form
+    [config]="config"
+    #form
+    (submit)="submit($event)">
+  </app-dynamic-form>
+  <p>form valid: {{ form.valid }}</p>
+  <p>form value: {{ form.value | json }}</p>
+</div>
+
 <div class="container">
   <main>
     <header class="clearfix">

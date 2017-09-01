@@ -20,6 +20,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BtnScrollTopComponent } from './shared/component/btn-scroll-top.component';
 import { BtnScrollHideDirective } from './shared/directives/btn-scroll-hide.directive';
 import { InfinityScrollDirective } from './shared/directives/infinity-scroll.directive';
+import { DynamicFormModule } from './dynamic-form/dynamic-form.module';
 
 
 @NgModule({
@@ -34,9 +35,10 @@ import { InfinityScrollDirective } from './shared/directives/infinity-scroll.dir
     BrowserModule,
     HttpModule,
     FormsModule,
-    ReactiveFormsModule,
     MasonryModule,
     BrowserAnimationsModule,
+
+    DynamicFormModule,
 
     MdAutocompleteModule,
     MdButtonModule,
